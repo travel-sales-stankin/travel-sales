@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>travel-sales-stankin</title>
+        <!-- Latest compiled and minified CSS -->
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    </head>
+    <body style = "background-color:#FFFAFA;">
+    <header>
+        
+      <div class="collapse bg-dark" id="navbarHeader">
+          
+        <div class="container">
+           
+          <div class="row">
+              
+            <div class="col-sm-8 col-md-7 py-4">
+                 
+              <h4 class="text-white">About</h4>
+              <p class="text-muted">lorem ipsum</p>
+                
+
+
+            <!--   <form>-->
+            <!--  <div>-->
+            <!--    <input type="radio" id="contactChoice1"-->
+            <!--     name="mode" value="asc" checked="checked">-->
+            <!--    <label for="contactChoice1">Сначала новые</label>-->
+            
+            <!--    <input type="radio" id="contactChoice2"-->
+            <!--     name="mode" value="dsc">-->
+            <!--    <label for="contactChoice2">Сначала старые</label>-->
+            <!--  </div>-->
+            <!--</form>-->
+             <form>
+                <div class="custom-control custom-radio">
+                    <input type="radio" class="custom-control-input" id="contactChoice1" name="mode" value="asc" >
+                    <label class="custom-control-label" for="contactChoice1">Сначала новые</label>
+                   
+                    
+                </div>
+                <div class="custom-control custom-radio">
+                   
+                    <input type="radio" class="custom-control-input" id="contactChoice2" name="mode" value="dsc" >
+                    <label class="custom-control-label" for="contactChoice2">Сначала старые</label>
+                    
+                </div>
+            </form> 
+            <button type="button" style = "margin-bottom:10px;" id = "filter-btn" class="btn btn-primary btn-sm bg-dark">Filter</button>
+           
+            </div>
+            
+          </div>
+        </div>
+      </div>
+       
+      <div class="navbar navbar-dark bg-dark box-shadow">
+        <div class="container d-flex justify-content-between">
+          <a href="#" class="navbar-brand d-flex align-items-center">
+           <img src="https://travel-sales-stankin.000webhostapp.com/beer_pitcher_glass_drink_sticker_icon_123467.png">
+            <strong>Travel Sales</strong>
+          </a>
+          <div id="tableManager" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Акция</h2>
+                    </div>
+
+                    <div class="modal-body">
+                        <div id="editContent">
+                            <input type="text" class="form-control" placeholder="Название акции..." id="Name"><br>
+                            <textarea class="form-control" id="p_link" placeholder="Link"></textarea><br>
+                            <textarea class="form-control" id="p_start" placeholder="start"></textarea><br>
+
+                            <textarea class="form-control" id="p_desc" placeholder="description"></textarea><br>
+                            <input type="hidden" id="editRowID" value="0">
+                        </div>
+
+                        <div id="showContent" style="display:none;">
+                            <h3>link</h3>
+                            <div id="linkView" style="overflow-y: scroll; height: 50px;"></div>
+                            <hr>
+                            <h3>start</h3>
+                            <div id="startView"></div>
+                            <h3>img</h3>
+                            <div id="imgView"></div>
+                            <h3>description</h3>
+                            <div id="descView" style="overflow-y: scroll; height: 50px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-primary" data-dismiss="modal" value="Close" id="closeBtn" style="display: none;">
+                        <input type="button" id="manageBtn" onclick="manageData('addOffer')" value="Save" class="btn btn-success">
+                    </div>
+                </div>
+            </div>
+        </div>
+          <input style="float: top " type="button" class="btn btn-success btn-sm" id="addNew" value="Предложить Акцию">
+          <button class="navbar-toggler"  type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+        <div class="container" style="margin-top: 20px">
+            
+            
+                <div id ="todel" class = "row results">
+
+                </div>
+             <div class="row">
+             <div class="col text-center">
+                 
+            <button type="button" style = "margin-bottom:10px;" id = "more-btn" class="btn btn-primary btn-sm bg-dark">More</button>
+            
+            <!--<button type="button" style = "margin-bottom:10px;" id="fresh" class="btn btn-primary btn-sm bg-dark">Refresh</button>-->
+      </div>
+  </div>
+            
+            
+        </div>
+         <footer class="page-footer font-small bg-dark pt-4">
+             
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">© 2019 Travel-sales-stankin:
+    <a href="#">Creator</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+ <style>
+   .card {
+    
+    box-shadow: 0 0 3px rgba(0,0,0,0.5); /* Параметры тени */
+    
+   }
+  </style>
+      <script
+			  src="https://code.jquery.com/jquery-3.4.1.min.js"
+			  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+			  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+      <script src="https://travel-sales-stankin.000webhostapp.com/intersection-observer.js"></script>
+        
+        
+        <script type="text/javascript">
+            var start = 0;
+            var limit = 12;
+            var reachedMax = false;
+            /*
+            $(window).scroll(function () {
+                if ($(window).scrollTop() == $(document).height() - $(window).height())
+                    getData();
+            });
+            */
+            $("#addNew").on('click', function () {
+               $("#tableManager").modal('show');
+            });
+             $("#tableManager").on('hidden.bs.modal', function () {
+               $("#showContent").fadeOut();
+               $("#editContent").fadeIn();
+               $("#editRowID").val(0);
+               $("#p_link").val("");
+               $("#p_start").val("");
+             
+               $("#p_desc").val("");
+               $("#Name").val("");
+               $("#closeBtn").fadeOut();
+               $("#manageBtn").attr('value', 'Add New').attr('onclick', "manageData('addNew')").fadeIn();
+            });
+             function manageData(key) {
+            var name = $("#Name");
+            var p_link = $("#p_link");
+           
+             var p_start = $("#p_start");
+              var p_desc = $("#p_desc");
+            var editRowID = $("#editRowID");
+
+            if (isNotEmpty(name) && isNotEmpty(p_link) && isNotEmpty(p_start)&& isNotEmpty(p_desc)) {
+                $.ajax({
+                   url: 'admin/ajax.php',
+                   method: 'POST',
+                   dataType: 'text',
+                   data: {
+                       key: key,
+                       name: name.val(),
+                       p_link: p_link.val(),
+                        p_start: p_start.val(),
+                        p_img: 'no',
+                        p_group: '',
+                         p_desc: p_desc.val(),
+                       rowID: editRowID.val()
+                   }, success: function (response) {
+                       if (response != "success")
+                           alert(response);
+                       else {
+                           $("#country_"+editRowID.val()).html(name.val());
+                           name.val('');
+                           p_link.val('');
+                            
+                             p_start.val('');
+                           p_desc.val('');
+                           $("#tableManager").modal('hide');
+                           $("#manageBtn").attr('value', 'Add').attr('onclick', "manageData('addNew')");
+                       }
+                   }
+                });
+            }
+        }
+
+        function isNotEmpty(caller) {
+            if (caller.val() == '') {
+                caller.css('border', '1px solid red');
+                return false;
+            } else
+                caller.css('border', '');
+
+            return true;
+        }
+            $('#more-btn').on('click', function() {
+                getData();
+            });
+            let f_mode = 0;
+            $('#filter-btn').on('click', function() {
+                var list = document.getElementById("todel");
+                while (list.hasChildNodes()) {
+                        list.removeChild(list.firstChild);
+                    }
+                let rad = document.getElementsByName("mode");
+                if(rad[1].checked){
+                    f_mode = 1;
+                    
+                } else{
+                    f_mode = 0;
+                }
+                start = 0;
+                getData();
+            });
+            $('#fresh').on('click', function() {
+                window.location.reload(true);
+            });
+
+            $(document).ready(function () {
+               getData();
+            });
+           
+            
+            function getData() {
+                if (reachedMax)
+                    return;
+
+                $.ajax({
+                   url: 'data.php',
+                   method: 'POST',
+                    dataType: 'text',
+                   data: {
+                       getData: 1,
+                       start: start,
+                       limit: limit,
+                       mode: f_mode
+                   },
+                   success: function(response) {
+                        if (response == "reachedMax")
+                            reachedMax = true;
+                        else {
+                            start += limit;
+                            $(".results").append(response);
+                        }
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>
