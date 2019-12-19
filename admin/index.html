@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>travel-sales-stankin admin panel</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://travel-sales-stankin.000webhostapp.com/admin/css/dataTables.bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container" style="margin-top: 30px;">
+
+        <div id="tableManager" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Акция</h2>
+                    </div>
+
+                    <div class="modal-body">
+                        <div id="editContent">
+                            <input type="text" class="form-control" placeholder="Название акции..." id="Name"><br>
+                            <textarea class="form-control" id="p_link" placeholder="Link"></textarea><br>
+                            <textarea class="form-control" id="p_start" placeholder="start"></textarea><br>
+                            <textarea class="form-control" id="p_img" placeholder="img link"></textarea><br>
+                            <textarea class="form-control" id="p_group" placeholder="group"></textarea><br>
+                            <textarea class="form-control" id="p_desc" placeholder="description"></textarea><br>
+                            <input type="hidden" id="editRowID" value="0">
+                        </div>
+
+                        <div id="showContent" style="display:none;">
+                            <h3>link</h3>
+                            <div id="linkView" style="overflow-y: scroll; height: 50px;"></div>
+                            <hr>
+                            <h3>start</h3>
+                            <div id="startView"></div>
+                            <h3>img</h3>
+                            <div id="imgView"></div>
+                            <h3>group</h3>
+                            <div id="groupView"></div>
+                            <h3>description</h3>
+                            <div id="descView" style="overflow-y: scroll; height: 50px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-primary" data-dismiss="modal" value="Close" id="closeBtn" style="display: none;">
+                        <input type="button" id="manageBtn" onclick="manageData('addNew')" value="Save" class="btn btn-success">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h2>Travel-Sales-Stankin Admin Panel</h2>
+
+                <input style="float: right" type="button" class="btn btn-success" id="addNew" value="Add New">
+                <input style="margin-right:10px; float: right" type="button"  onclick="updateDB()" class="btn btn-success" id="updParse" value="Uptadate parser">
+                <br><br>
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <td>ID</td>
+                            <td>Country Name</td>
+                            <td>Group</td>
+                            <td>Options</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+     <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"
+      ></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    
+    <script src="https://travel-sales-stankin.000webhostapp.com/admin/js/dataTables.bootstrap.min.js" type="text/javascript"></script>
+    <script src="https://travel-sales-stankin.000webhostapp.com/admin/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#addNew").on('click', function () {
+               $("#tableManager").modal('show');
+            });
+
+            $("#tableManager").on('hidden.bs.modal', function () {
+               $("#showContent").fadeOut();
+               $("#editContent").fadeIn();
+               $("#editRowID").val(0);
+               $("#p_link").val("");
+               $("#p_group").val("");
+               $("#p_start").val("");
+               $("#p_img").val("");
+               $("#p_desc").val("");
+               $("#Name").val("");
+               $("#closeBtn").fadeOut();
+               $("#manageBtn").attr('value', 'Add New').attr('onclick', "manageData('addNew')").fadeIn();
+            });
+
+            getExistingData(0, 50);
+        });
+
+        function deleteRow(rowID) {
+            if (confirm('Are you sure??')) {
+                $.ajax({
+                    url: 'ajax.php',
+                    method: 'POST',
+                    dataType: 'text',
+                    data: {
+                        key: 'deleteRow',
+                        rowID: rowID
+                    }, success: function (response) {
+                        $("#country_"+rowID).parent().remove();
+                        alert(response);
+                    }
+                });
+            }
+        }
+
+        function viewORedit(rowID, type) {
+            $.ajax({
+                url: 'ajax.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    key: 'getRowData',
+                    rowID: rowID
+                }, success: function (response) {
+                    if (type == "view") {
+                        $("#showContent").fadeIn();
+                        $("#editContent").fadeOut();
+                        $("#linkView").html(response.p_link);
+                        $("#startView").html(response.p_start);
+                        $("#groupView").html(response.p_group);
+                        $("#imgView").html(response.p_img);
+                        $("#descView").html(response.p_desc);
+                        $("#manageBtn").fadeOut();
+                        $("#closeBtn").fadeIn();
+                    } else {
+                        $("#editContent").fadeIn();
+                        $("#editRowID").val(rowID);
+                        $("#showContent").fadeOut();
+                        $("#p_link").val(response.p_link);
+                        $("#p_group").val(response.p_group);
+                        $("#p_start").val(response.p_start);
+                        $("#p_img").val(response.p_img);
+                        $("#p_desc").val(response.p_desc);
+                        $("#Name").val(response.Name);
+                        $("#closeBtn").fadeOut();
+                        $("#manageBtn").attr('value', 'Save Changes').attr('onclick', "manageData('updateRow')");
+                    }
+
+                    //$(".modal-title").html(response.Name);
+                    $("#tableManager").modal('show');
+                }
+            });
+        }
+
+        function getExistingData(start, limit) {
+            $.ajax({
+                url: 'ajax.php',
+                method: 'POST',
+                dataType: 'text',
+                data: {
+                    key: 'getExistingData',
+                    start: start,
+                    limit: limit
+                }, success: function (response) {
+                    if (response != "reachedMax") {
+                        $('tbody').append(response);
+                        start += limit;
+                        getExistingData(start, limit);
+                    } else
+                        $(".table").DataTable();
+                }
+            });
+        }
+        function updateDB() {
+            $.ajax({
+                url: 'vandrouki.php',
+                method: 'POST',
+                dataType: 'text',
+                data: {
+                    key: 'updateDB',
+                    
+                }, success: function (response) {
+                           alert(response);
+                           window.location.reload(true);
+                }
+            });
+        }
+
+        function manageData(key) {
+            var name = $("#Name");
+            var p_link = $("#p_link");
+            var p_img = $("#p_img");
+            var p_group = $("#p_group");
+             var p_start = $("#p_start");
+              var p_desc = $("#p_desc");
+            var editRowID = $("#editRowID");
+
+            if (isNotEmpty(name) && isNotEmpty(p_link)  && isNotEmpty(p_img)&& isNotEmpty(p_start)&& isNotEmpty(p_desc)) {
+                $.ajax({
+                   url: 'ajax.php',
+                   method: 'POST',
+                   dataType: 'text',
+                   data: {
+                       key: key,
+                       name: name.val(),
+                       p_link: p_link.val(),
+                       p_img: p_img.val(),
+                        p_start: p_start.val(),
+                        p_group: p_group.val(),
+                         p_desc: p_desc.val(),
+                       rowID: editRowID.val()
+                   }, success: function (response) {
+                       if (response != "success")
+                           alert(response);
+                       else {
+                           $("#country_"+editRowID.val()).html(name.val());
+                           name.val('');
+                           p_link.val('');
+                            p_img.val('');
+                             p_start.val('');
+                             p_group.val('');
+                           p_desc.val('');
+                           $("#tableManager").modal('hide');
+                           $("#manageBtn").attr('value', 'Add').attr('onclick', "manageData('addNew')");
+                       }
+                   }
+                });
+            }
+        }
+
+        function isNotEmpty(caller) {
+            if (caller.val() == '') {
+                caller.css('border', '1px solid red');
+                return false;
+            } else
+                caller.css('border', '');
+
+            return true;
+        }
+    </script>
+</body>
+</html>
